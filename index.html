@@ -46,6 +46,20 @@
   <div id="response-container">
     Response will (should hopefully) appear here.
   </div>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputField = document.getElementById('userInput');
+      const submitBtn = document.getElementById('submitBtn');
+      const responseBox = document.getElementById('response-container');
+
+      submitBtn.addEventListener('click', function() {
+        const textValue = inputField.value;
+        responseBox.textContent = textValue;
+      });
+    });
+  </script>
 </body>
   
 </html>
