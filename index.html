@@ -6,6 +6,9 @@
       position: absolute;
       top: 20px;
       left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     #response-container {
@@ -14,68 +17,71 @@
       right: 20px;
       max-width: 400px;
       font-family: Arial, sans-serif;
-      background: #ffffff;
+      background: #f9f9f9;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
       white-space: pre-wrap;
     }
 
-    #userInput {
+    input {
       padding: 6px;
       font-size: 14px;
-      width: 200px;
+      width: 240px;
     }
 
-    #submitBtn {
+    button {
       padding: 6px 12px;
       font-size: 14px;
-      margin-left: 4px;
       cursor: pointer;
+      width: 100px;
     }
   </style>
 </head>
-
-  
 <body>
   <div id="input-container">
-    <input type="text" id="userInput" placeholder="Type something…">
+
+    <input type="text" id="userApiKey" placeholder="Insert OpenAI Key">
+
+    <input type="text" id="userInput" placeholder="ChatGPT prompt">
     <button id="submitBtn">Submit</button>
   </div>
 
   <div id="response-container">
-    Response will (should hopefully) appear here.
+    Response will appear here.
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const apiKeyInput  = document.getElementById('userApiKey');
+      const promptInput  = document.getElementById('userInput');
+      const submitBtn    = document.getElementById('submitBtn');
+      const responseBox  = document.getElementById('response-container');
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const inputField = document.getElementById('userInput');
-      const submitBtn = document.getElementById('submitBtn');
-      const responseBox = document.getElementById('response-container');
+      submitBtn.addEventListener('click', () => {
 
-      submitBtn.addEventListener('click', function() {
-        const textValue = inputField.value;
-        responseBox.textContent = textValue;
-      });
-    });
+        const key    = apiKeyInput.value.trim();
+        const prompt = promptInput.value.trim();
 
-     const OPENAI_API_KEY = ""; // ENTER KEY LATER IN SEPERATE FILE TO AVOID ERROR
+        apiKeyInput.value = '';
+        promptInput.value = '';
 
-      submitBtn.addEventListener('click', function() {
-        const prompt = inputField.value.trim();
+        if (!key) {
+          responseBox.textContent = "=Please paste your OpenAI API key first";
+          return;
+        }
         if (!prompt) {
-          responseBox.textContent = "Please enter a message.";
+          responseBox.textContent = "Please type a prompt";
           return;
         }
 
-        responseBox.textContent = "Loading...";
+        responseBox.textContent = "Thinking…";
 
         fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${OPENAI_API_KEY}`
+            "Content-Type":  "application/json",
+            "Authorization": `Bearer ${key}`
           },
           body: JSON.stringify({
             model: "gpt-4.1-nano",
@@ -83,27 +89,24 @@
             max_tokens: 500
           })
         })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
+        .then(res => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          return res.json();
         })
-        .then((data) => {
+        .then(data => {
           const choice = data.choices && data.choices[0];
-          if (choice && choice.message && choice.message.content) {
+          if (choice?.message?.content) {
             responseBox.textContent = choice.message.content.trim();
           } else {
-            responseBox.textContent = "No response available.";
+            responseBox.textContent = "No response available";
           }
         })
-        .catch((err) => {
-          responseBox.textContent = "Error fetching response.";
+        .catch(err => {
+          responseBox.textContent = "Error fetching response";
           console.error("Fetch error:", err);
         });
       });
     });
   </script>
 </body>
-  
 </html>
