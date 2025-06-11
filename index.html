@@ -80,7 +80,7 @@
         const key    = apiKeyInput.value.trim();
         const prompt = promptInput.value.trim();
 
-        apiKeyInput.value = '';
+        // apiKeyInput.value = '';
         promptInput.value = '';
 
         if (!key) {
@@ -101,7 +101,7 @@
             "Authorization": `Bearer ${key}`
           },
           body: JSON.stringify({
-            model: "gpt-4.1-nano",
+            model: "gpt-4.5-preview",
             messages: [{role: "system",content: "You need to design a fake phishing email per the specifications provided by the user."},     { role: "user", content: prompt }],
             max_tokens: 500
           })
