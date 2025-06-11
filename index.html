@@ -102,7 +102,7 @@
           },
           body: JSON.stringify({
             model: "gpt-4.1-nano",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{role: "system",content: "You need to design a fake phishing email per the specifications provided by the user."},     { role: "user", content: prompt }],
             max_tokens: 500
           })
         })
